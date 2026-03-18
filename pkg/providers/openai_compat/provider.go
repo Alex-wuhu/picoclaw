@@ -225,33 +225,6 @@ func isNativeSearchHost(apiBase string) bool {
 	return host == "api.openai.com" || strings.HasSuffix(host, ".openai.azure.com")
 }
 
-func buildToolsList(tools []ToolDefinition, nativeSearch bool) []any {
-	result := make([]any, 0, len(tools)+1)
-	for _, t := range tools {
-		if nativeSearch && strings.EqualFold(t.Function.Name, "web_search") {
-			continue
-		}
-		result = append(result, t)
-	}
-	if nativeSearch {
-		result = append(result, map[string]any{"type": "web_search_preview"})
-	}
-	return result
-}
-
-func (p *Provider) SupportsNativeSearch() bool {
-	return isNativeSearchHost(p.apiBase)
-}
-
-func isNativeSearchHost(apiBase string) bool {
-	u, err := url.Parse(apiBase)
-	if err != nil {
-		return false
-	}
-	host := u.Hostname()
-	return host == "api.openai.com" || strings.HasSuffix(host, ".openai.azure.com")
-}
-
 // supportsPromptCacheKey reports whether the given API base is known to
 // support the prompt_cache_key request field. Currently only OpenAI's own
 // API and Azure OpenAI support this. All other OpenAI-compatible providers
